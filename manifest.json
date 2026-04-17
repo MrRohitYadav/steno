@@ -1,0 +1,16 @@
+{
+  "name": "StenoMaster Ultra",
+  "short_name": "StenoMaster",
+  "description": "Professional Pitman Shorthand Dictation Tool",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/583/583253.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
