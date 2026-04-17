@@ -3,47 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StenoMaster Ultra</title>
+    <title>StenoMaster Ultra v2</title>
     <link rel="manifest" href="manifest.json">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/583/583253.png">
 
     <style>
-        :root {
-            --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --accent: #3b82f6;
-        }
-        [data-theme="dark"] {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #60a5fa;
-        }
+        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
+        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #60a5fa; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; transition: 0.3s; }
         .container { max-width: 600px; margin: auto; }
         .card { background: var(--card); border-radius: 16px; padding: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
-        /* Tabs */
         .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: #e2e8f0; cursor: pointer; font-weight: bold; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #e2e8f0; cursor: pointer; font-weight: bold; font-size: 14px; }
         .tab-btn.active { background: var(--primary); color: white; }
-
-        /* General UI */
-        textarea { width: 100%; height: 100px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-size: 16px; background: transparent; color: inherit; }
-        .btn { border: none; border-radius: 10px; padding: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 10px; }
+        textarea { width: 100%; height: 100px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-size: 16px; background: transparent; color: inherit; box-sizing: border-box; }
+        .btn { border: none; border-radius: 10px; padding: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 10px; }
         .btn-play { background: #16a34a; color: white; }
         .btn-stop { background: #ef4444; color: white; }
-        
-        /* Speed Staircase Toggle */
-        .switch-container { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; font-size: 14px; font-weight: bold; }
-        
-        /* Quiz Styles */
-        #quizZone { text-align: center; display: none; }
-        .quiz-word { font-size: 32px; font-weight: 800; color: var(--primary); margin: 20px 0; }
-        
-        /* Highlight words */
-        .active-word { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+        .quiz-word { font-size: 48px; font-weight: 800; color: var(--primary); margin: 30px 0; min-height: 60px; display: flex; align-items: center; justify-content: center; }
         #display { font-size: 24px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        
+        .active-word { color: var(--primary); border-bottom: 3px solid var(--primary); font-weight: bold; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        input[type="range"] { width: 100%; height: 8px; border-radius: 5px; appearance: none; background: #cbd5e1; }
     </style>
 </head>
 <body data-theme="light">
@@ -55,39 +40,36 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('dictate')">Dictation</button>
-        <button class="tab-btn" onclick="showTab('quiz')">Quiz Mode</button>
+        <button id="dictateTabBtn" class="tab-btn active" onclick="showTab('dictate')">Dictation Mode</button>
+        <button id="quizTabBtn" class="tab-btn" onclick="showTab('quiz')">Grammalogue Quiz</button>
+    </div>
+
+    <div class="card" style="padding: 15px; margin-bottom: 10px;">
+        <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:10px;">
+            <span>Practice Gap: <b id="gapVal">1.0</b>s</span>
+            <span id="wpmEst">~50 WPM</span>
+        </div>
+        <input type="range" id="gapSlider" min="0.2" max="4.0" step="0.1" value="1.0">
     </div>
 
     <div id="dictateTab">
         <div class="card">
-            <textarea id="textInput" placeholder="Paste Ex-1, Ex-2..."></textarea>
-            
-            <div class="switch-container">
-                <span>Speed Staircase (Auto-increase)</span>
-                <input type="checkbox" id="staircaseToggle">
+            <textarea id="textInput" placeholder="Paste your text here (use hyphens for phrases like who-will)"></textarea>
+            <div style="margin: 15px 0; font-size: 14px;">
+                <input type="checkbox" id="staircaseToggle"> Speed Staircase (Auto-speedup)
             </div>
-
-            <div style="margin: 15px 0;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
-                    <span>Gap: <b id="gapVal">0.5</b>s</span>
-                    <span id="wpmEst">~60 WPM</span>
-                </div>
-                <input type="range" id="gapSlider" min="0.1" max="2.0" step="0.1" value="0.5" style="width:100%;">
-            </div>
-
-            <button id="playBtn" class="btn btn-play" onclick="startDictation()">START PRACTICE</button>
+            <button id="playBtn" class="btn btn-play" onclick="startDictation()">START DICTATION</button>
             <button id="stopBtn" class="btn btn-stop" onclick="stopDictation()" style="display:none;">STOP</button>
-            <div id="display">Tap Start...</div>
+            <div id="display">Ready to dictate...</div>
         </div>
     </div>
 
     <div id="quizTab" style="display:none;">
-        <div class="card" id="quizZone" style="display:block;">
-            <p>Write the Pitman outline for:</p>
-            <div class="quiz-word" id="quizWord">READY?</div>
-            <button class="btn btn-play" onclick="nextQuiz()">Next Word</button>
-            <p style="margin-top:15px; font-size:12px; opacity:0.7;">Practice the common grammalogues!</p>
+        <div class="card" style="text-align: center;">
+            <p>Write the outline for the word you hear:</p>
+            <div class="quiz-word" id="quizWord">---</div>
+            <button id="quizPlayBtn" class="btn btn-play" onclick="startQuiz()">START AUTO-QUIZ</button>
+            <button id="quizStopBtn" class="btn btn-stop" onclick="stopQuiz()" style="display:none;">STOP QUIZ</button>
         </div>
     </div>
 </div>
@@ -97,7 +79,10 @@
     let isRunning = false;
     let staircaseInterval;
 
-    const grammalogues = ["A", "An", "The", "All", "Two", "Too", "Of", "To", "But", "Who", "Shall", "Which", "Have", "Thank", "Think", "Though", "Them", "Was", "Whose", "Been"];
+    // Standard Pitman New Era Grammalogues
+    const grammalogues = [
+        "A", "An", "The", "All", "Two", "Too", "Of", "To", "But", "Who", "Shall", "Which", "Have", "Thank", "Think", "Though", "Them", "Was", "Whose", "Been", "General", "Important", "Improvement", "Whether", "Knowledge", "Language", "Large", "Subject", "Regular", "Public", "Publish"
+    ];
 
     function toggleTheme() {
         const body = document.body;
@@ -108,17 +93,47 @@
     }
 
     function showTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        stopDictation();
+        stopQuiz();
+        document.getElementById('dictateTabBtn').classList.toggle('active', tab === 'dictate');
+        document.getElementById('quizTabBtn').classList.toggle('active', tab === 'quiz');
         document.getElementById('dictateTab').style.display = tab === 'dictate' ? 'block' : 'none';
         document.getElementById('quizTab').style.display = tab === 'quiz' ? 'block' : 'none';
     }
 
-    function nextQuiz() {
-        const rand = grammalogues[Math.floor(Math.random() * grammalogues.length)];
-        document.getElementById('quizWord').innerText = rand;
+    // --- CONTINUOUS QUIZ LOGIC ---
+    async function startQuiz() {
+        if(isRunning) return;
+        isRunning = true;
+        document.getElementById('quizPlayBtn').style.display = 'none';
+        document.getElementById('quizStopBtn').style.display = 'block';
+
+        while(isRunning) {
+            const rand = grammalogues[Math.floor(Math.random() * grammalogues.length)];
+            document.getElementById('quizWord').innerText = rand;
+            
+            const utter = new SpeechSynthesisUtterance(rand);
+            utter.rate = 1.0;
+            synth.speak(utter);
+
+            await new Promise(resolve => {
+                utter.onend = () => {
+                    const gap = document.getElementById('gapSlider').value * 1000;
+                    setTimeout(resolve, gap);
+                };
+            });
+        }
     }
 
+    function stopQuiz() {
+        isRunning = false;
+        synth.cancel();
+        document.getElementById('quizWord').innerText = "---";
+        document.getElementById('quizPlayBtn').style.display = 'block';
+        document.getElementById('quizStopBtn').style.display = 'none';
+    }
+
+    // --- DICTATION LOGIC ---
     async function startDictation() {
         const text = document.getElementById('textInput').value;
         const words = text.match(/[\w-]+|[.,!?;]/g) || [];
@@ -128,25 +143,21 @@
         document.getElementById('playBtn').style.display = 'none';
         document.getElementById('stopBtn').style.display = 'block';
 
-        // Speed Staircase Logic
         if(document.getElementById('staircaseToggle').checked) {
             staircaseInterval = setInterval(() => {
                 let slider = document.getElementById('gapSlider');
-                if(slider.value > 0.1) {
+                if(slider.value > 0.2) {
                     slider.value = (parseFloat(slider.value) - 0.1).toFixed(1);
                     slider.dispatchEvent(new Event('input'));
                 }
-            }, 30000); // Reduce gap every 30 seconds
+            }, 20000); 
         }
 
         for (let i = 0; i < words.length; i++) {
             if (!isRunning) break;
             document.getElementById('display').innerHTML = `<span class="active-word">${words[i]}</span>`;
-            
             const utter = new SpeechSynthesisUtterance(words[i]);
-            utter.rate = 1.0;
             synth.speak(utter);
-
             await new Promise(resolve => {
                 utter.onend = () => setTimeout(resolve, document.getElementById('gapSlider').value * 1000);
             });
@@ -165,7 +176,7 @@
 
     document.getElementById('gapSlider').oninput = function() {
         document.getElementById('gapVal').innerText = this.value;
-        const wpm = Math.round(60 / (0.6 + parseFloat(this.value)));
+        const wpm = Math.round(60 / (0.7 + parseFloat(this.value)));
         document.getElementById('wpmEst').innerText = `~${wpm} WPM`;
     };
 </script>
