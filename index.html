@@ -3,80 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StenoMaster Pro</title>
+    <title>StenoMaster Pro v7</title>
     <link rel="manifest" href="manifest.json">
     
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --success: #16a34a; }
+        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --success: #16a34a; --warning: #f59e0b; }
         [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #60a5fa; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; transition: 0.3s; }
         .container { max-width: 600px; margin: auto; }
         .card { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 12px; }
+        
         .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #e2e8f0; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #e2e8f0; cursor: pointer; font-weight: bold; font-size: 13px; }
         .tab-btn.active { background: var(--primary); color: white; }
-        textarea { width: 100%; height: 130px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-size: 16px; background: transparent; color: inherit; box-sizing: border-box; margin-top: 5px; resize: none; }
-        select, .btn { border: none; border-radius: 10px; padding: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; font-size: 15px; }
+        
+        textarea { width: 100%; height: 110px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-size: 16px; background: transparent; color: inherit; box-sizing: border-box; resize: none; }
+        
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn { border: none; border-radius: 10px; padding: 14px; font-weight: 700; cursor: pointer; flex: 1; font-size: 14px; transition: 0.2s; }
         .btn-play { background: var(--success); color: white; }
-        .btn-stop { background: #ef4444; color: white; }
-        #display, .quiz-word { font-size: 32px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary); }
-        .label-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin: 10px 0 5px 0; }
+        .btn-pause { background: var(--warning); color: white; display: none; }
+        .btn-stop { background: #ef4444; color: white; display: none; }
+        
+        #display { font-size: 32px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary); margin-top: 10px; }
+        .label-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin: 8px 0 4px 0; }
         input[type="range"] { width: 100%; height: 8px; border-radius: 5px; appearance: none; background: #cbd5e1; outline: none; }
-        input[type="range"]::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; background: var(--primary); border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body data-theme="light">
 
 <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h2 style="margin:0; font-size: 22px;">StenoMaster 🚀</h2>
-        <button onclick="toggleTheme()" id="themeBtn" style="border:none; background:none; font-size:20px; cursor:pointer;">🌙</button>
+        <h2 style="margin:0; font-size: 20px;">StenoMaster 🚀</h2>
+        <button onclick="toggleTheme()" style="border:none; background:none; font-size:18px;">🌙</button>
     </div>
 
     <div class="tabs">
-        <button id="dictTab" class="tab-btn active" onclick="showTab('dictate')">Dictation Mode</button>
-        <button id="quizTab" class="tab-btn" onclick="showTab('quiz')">Grammalogue Quiz</button>
+        <button id="libTab" class="tab-btn active" onclick="showTab('library')">Library</button>
+        <button id="dictTab" class="tab-btn" onclick="showTab('dictate')">Practice</button>
+        <button id="quizTab" class="tab-btn" onclick="showTab('quiz')">Quiz</button>
     </div>
 
     <div class="card">
-        <div class="label-row"><span>Select Examiner Voice</span></div>
-        <select id="voiceSelect" style="background: #e2e8f0; font-weight: 500;"></select>
-        
+        <select id="voiceSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;"></select>
         <div class="label-row">
             <span>Word Gap: <b id="gapVal">0.2</b>s</span>
             <span id="wpmEst" style="color:var(--primary)">120 WPM</span>
         </div>
         <input type="range" id="gapSlider" min="0.0" max="2.0" step="0.05" value="0.2">
-
-        <div class="label-row" style="color:#6366f1;">
-            <span>Phrase Pronunciation: <b id="phraseVal">0.8</b>x</span>
-        </div>
+        <div class="label-row" style="color:#6366f1;"><span>Phrase Speed: <b id="phraseVal">0.8</b>x</span></div>
         <input type="range" id="phraseSlider" min="0.5" max="1.1" step="0.1" value="0.8">
     </div>
 
-    <div id="dictatePanel">
+    <div id="libraryPanel">
         <div class="card">
-            <textarea id="textInput" placeholder="Paste your Pitman exercises here..."></textarea>
-            <div style="margin: 15px 0; font-size: 14px; display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="staircase" style="width:18px; height:18px;"> 
-                <span><b>Speed Staircase</b> (Increase WPM automatically)</span>
+            <h3 style="margin-top:0;">New Era Key</h3>
+            <select id="exerciseSelect" onchange="loadExercise()" style="width:100%; padding:10px; border-radius:8px;">
+                <option value="">-- Choose Exercise --</option>
+                <option value="ex1">Exercise 1 (The Date)</option>
+                <option value="ex7">Exercise 7 (Fetch the Cash)</option>
+                <option value="ex119">Exercise 119 (High Speed)</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="dictatePanel" style="display:none;">
+        <div class="card">
+            <textarea id="textInput" placeholder="Text moves here from Library..."></textarea>
+            <div class="btn-group">
+                <button id="playBtn" class="btn btn-play" onclick="startDictation()">START</button>
+                <button id="pauseBtn" class="btn btn-pause" onclick="togglePause()">PAUSE</button>
+                <button id="stopBtn" class="btn btn-stop" onclick="stopDictation()">STOP</button>
             </div>
-            <button id="playBtn" class="btn btn-play" onclick="startDictation()">START PRACTICE</button>
-            <button id="stopBtn" class="btn btn-stop" onclick="stopDictation()" style="display:none;">STOP</button>
             <div id="display">Ready...</div>
         </div>
     </div>
 
     <div id="quizPanel" style="display:none;">
         <div class="card" style="text-align:center;">
-            <p style="margin-top:0; font-size:14px; opacity:0.8;">Write the outline for the word you hear:</p>
-            <div class="quiz-word" id="quizWord">---</div>
-            <button id="qPlay" class="btn btn-play" onclick="startQuiz()">START AUTO-QUIZ</button>
-            <button id="qStop" class="btn btn-stop" onclick="stopQuiz()" style="display:none;">STOP QUIZ</button>
+            <div class="quiz-word" id="quizWord" style="font-size:40px; min-height:100px; display:flex; align-items:center; justify-content:center; color:var(--primary); font-weight:800;">---</div>
+            <div class="btn-group">
+                <button id="qPlay" class="btn btn-play" onclick="startQuiz()">START QUIZ</button>
+                <button id="qPause" class="btn btn-pause" onclick="togglePause()">PAUSE</button>
+                <button id="qStop" class="btn btn-stop" onclick="stopQuiz()">STOP</button>
+            </div>
         </div>
     </div>
 </div>
@@ -84,105 +94,122 @@
 <script>
     const synth = window.speechSynthesis;
     let isRunning = false;
+    let isPaused = false;
     let voices = [];
-    let staircaseInterval;
 
-    const grams = [
-    // --- CORE GRAMMALOGUES ---
-    "A", "An", "The", "All", "Two", "Too", "Of", "To", "But", "Who", "Should", "Put", "Be", "He", "If", "For", "Was", "Whose", "Shall", "Which", "Have", "Thank", "Think", "Though", "Them", "Was", "Whose", "Been", "General", "Important", "Improvement", "Whether", "Knowledge", "Language", "Large", "Subject", "Regular", "Public", "Publish", "Practice", "Between", "Give", "Given", "Him", "Am", "Own", "Are", "Our", "Hour", "Beyond", "You", "Your", "Year", "How", "Why", "Large", "Can", "Come", "Go", "Called", "Equal", "Cold", "Gold", "Quite", "Could", "According", "Care", "Dear", "Chair", "Cheer", "Larger", "Every", "Very", "More", "Remark", "Mr", "Mere", "Nor", "Near", "Sure", "Pleasure", "They", "Their", "There", "Deliver", "Difference", "Different", "Difficult", "Doctor", "During", "Subjected", "Liberty", "Member", "Number", "Remember", "Truth", "Us", "Special", "Speak", "Schooled", "School", "Simplified", "Simple", "Simply", "Small", "Subject", "Satisfaction", "Justification", "Object", "Representation", "Responsible", "Organize", "Knowledge", "Experience", "Signify", "Significance", "Significant", "Insignificant", "Insignificance",
+    const library = {
+        ex1: "1. The date. 2. The page. 3. Date-the page. 4. The debt. 5. Pay-the debt.",
+        ex7: "Who-will come to fetch-the cash? We-shall-be at-the bank at two. We-know-the debt was paid. A cheque was given to him long-ago. We saw them at-the shop. They bought a ball for Jack.",
+        ex119: "It-is often felt that a speed of 80 words a minute in shorthand is adequate for ordinary business purposes. However, some employers require a higher degree of skill, and-they-will-not employ a stenographer who-cannot write 120 words a minute."
+    };
 
-    // --- HIGH-FREQUENCY PHRASES (SSC EXAM SPECIAL) ---
-    "To-the", "Of-the", "And-the", "Should-be", "It-is", "It-will", "Which-will", "Who-will", "I-am", "We-are", "We-have", "For-the", "In-the", "At-the", "Of-which", "To-which", "On-the", "With-the", "I-will", "We-shall", "You-should", "It-should-be", "As-well-as", "As-soon-as", "As-much-as", "In-this", "Of-this", "For-this", "At-all", "By-all", "To-be", "Have-been", "Had-been", "Shall-be", "Which-be", "Who-be", "It-is-not", "I-am-not", "We-are-not", "You-are-not", "I-can", "We-can", "They-can", "It-may-be", "There-will-be", "This-is", "That-is", "There-is", "Which-is", "In-our", "Of-our", "To-our", "By-our", "With-our", "From-the", "Under-the", "Into-the", "Upon-the", "More-than", "Less-than", "Rather-than", "So-as-to", "We-think", "We-think-that", "They-think-that", "I-think-you-will", "I-hope", "I-hope-you-will", "We-hope", "We-hope-that", "In-connection-with", "In-respect-of", "In-order-to", "With-reference-to", "With-regard-to", "It-appears", "It-appears-that", "It-is-said", "It-is-suggested", "Point-of-view", "From-my-point-of-view"
-];
-
+    const grams = ["A", "The", "To-the", "Of-the", "Should-be", "Who-will", "Thank", "Think", "Knowledge", "Language", "Important", "Subject"];
 
     function loadVoices() {
         voices = synth.getVoices();
-        const select = document.getElementById('voiceSelect');
-        select.innerHTML = voices.map((v, i) => `<option value="${i}">${v.name} (${v.lang})</option>`).join('');
-        // Try to find a default clear voice
-        const defaultIdx = voices.findIndex(v => v.name.includes('Google') && v.lang.includes('en'));
-        if (defaultIdx !== -1) select.value = defaultIdx;
+        document.getElementById('voiceSelect').innerHTML = voices.map((v, i) => `<option value="${i}">${v.name}</option>`).join('');
     }
     window.speechSynthesis.onvoiceschanged = loadVoices;
     loadVoices();
 
-    function toggleTheme() {
-        const b = document.body;
-        const current = b.getAttribute('data-theme');
-        const next = current === 'light' ? 'dark' : 'light';
-        b.setAttribute('data-theme', next);
-        document.getElementById('themeBtn').innerText = next === 'light' ? '🌙' : '☀️';
-    }
-
     function showTab(t) {
         stopDictation(); stopQuiz();
+        document.getElementById('libraryPanel').style.display = t === 'library' ? 'block' : 'none';
         document.getElementById('dictatePanel').style.display = t === 'dictate' ? 'block' : 'none';
         document.getElementById('quizPanel').style.display = t === 'quiz' ? 'block' : 'none';
-        document.getElementById('dictTab').classList.toggle('active', t === 'dictate');
-        document.getElementById('quizTab').classList.toggle('active', t === 'quiz');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(t.slice(0,3)+'Tab').classList.add('active');
     }
 
-    // --- DICTATION ENGINE ---
+    function loadExercise() {
+        const key = document.getElementById('exerciseSelect').value;
+        if(library[key]) {
+            document.getElementById('textInput').value = library[key];
+            showTab('dictate');
+        }
+    }
+
+    function togglePause() {
+        if (!isRunning) return;
+        if (!isPaused) {
+            synth.pause();
+            isPaused = true;
+            document.querySelectorAll('.btn-pause').forEach(b => b.innerText = "RESUME");
+        } else {
+            synth.resume();
+            isPaused = false;
+            document.querySelectorAll('.btn-pause').forEach(b => b.innerText = "PAUSE");
+        }
+    }
+
     async function startDictation() {
         const text = document.getElementById('textInput').value;
         const words = text.match(/[\w-]+|[.,!?;]/g) || [];
-        if (!words.length) return;
+        if(!words.length) return;
 
-        isRunning = true;
+        isRunning = true; isPaused = false;
         document.getElementById('playBtn').style.display = 'none';
+        document.getElementById('pauseBtn').style.display = 'block';
         document.getElementById('stopBtn').style.display = 'block';
-
-        if(document.getElementById('staircase').checked) {
-            staircaseInterval = setInterval(() => {
-                let slider = document.getElementById('gapSlider');
-                if(slider.value > 0.05) {
-                    slider.value = (parseFloat(slider.value) - 0.05).toFixed(2);
-                    slider.dispatchEvent(new Event('input'));
-                }
-            }, 15000);
-        }
 
         for (let i = 0; i < words.length; i++) {
             if (!isRunning) break;
+            
+            // PAUSE CHECK: Wait here if paused
+            while (isPaused) { await new Promise(r => setTimeout(r, 100)); }
+
             document.getElementById('display').innerText = words[i];
             const utter = new SpeechSynthesisUtterance(words[i]);
             utter.voice = voices[document.getElementById('voiceSelect').value];
-            
-            // Phrase vs Single Word Speed
             utter.rate = words[i].includes('-') ? parseFloat(document.getElementById('phraseSlider').value) : 1.1;
             
             synth.speak(utter);
             await new Promise(r => {
-                utter.onend = () => setTimeout(r, document.getElementById('gapSlider').value * 1000);
+                utter.onend = () => {
+                    const gap = document.getElementById('gapSlider').value * 1000;
+                    setTimeout(r, gap);
+                };
             });
         }
         stopDictation();
     }
 
-    function stopDictation() { isRunning = false; clearInterval(staircaseInterval); synth.cancel(); document.getElementById('playBtn').style.display = 'block'; document.getElementById('stopBtn').style.display = 'none'; document.getElementById('display').innerText = "Ready..."; }
+    function stopDictation() {
+        isRunning = false; isPaused = false; synth.cancel();
+        document.getElementById('playBtn').style.display = 'block';
+        document.getElementById('pauseBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'none';
+        document.getElementById('pauseBtn').innerText = "PAUSE";
+        document.getElementById('display').innerText = "Ready...";
+    }
 
-    // --- AUTO-QUIZ ENGINE ---
     async function startQuiz() {
-        isRunning = true;
+        isRunning = true; isPaused = false;
         document.getElementById('qPlay').style.display = 'none';
+        document.getElementById('qPause').style.display = 'block';
         document.getElementById('qStop').style.display = 'block';
 
         while(isRunning) {
-            const w = grams[Math.floor(Math.random() * grams.length)];
+            while (isPaused) { await new Promise(r => setTimeout(r, 100)); }
+            const w = grams[Math.floor(Math.random()*grams.length)];
             document.getElementById('quizWord').innerText = w;
-            const utter = new SpeechSynthesisUtterance(w);
-            utter.voice = voices[document.getElementById('voiceSelect').value];
-            synth.speak(utter);
-            await new Promise(r => {
-                utter.onend = () => setTimeout(r, document.getElementById('gapSlider').value * 1000);
-            });
+            const u = new SpeechSynthesisUtterance(w);
+            u.voice = voices[document.getElementById('voiceSelect').value];
+            synth.speak(u);
+            await new Promise(r => { u.onend = () => setTimeout(r, document.getElementById('gapSlider').value * 1000); });
         }
     }
 
-    function stopQuiz() { isRunning = false; synth.cancel(); document.getElementById('qPlay').style.display = 'block'; document.getElementById('qStop').style.display = 'none'; document.getElementById('quizWord').innerText = "---"; }
+    function stopQuiz() { 
+        isRunning = false; isPaused = false; synth.cancel();
+        document.getElementById('qPlay').style.display = 'block';
+        document.getElementById('qPause').style.display = 'none';
+        document.getElementById('qStop').style.display = 'none';
+        document.getElementById('qPause').innerText = "PAUSE";
+        document.getElementById('quizWord').innerText = "---";
+    }
 
-    // Slider Listeners
+    function toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); }
     document.getElementById('gapSlider').oninput = function() {
         document.getElementById('gapVal').innerText = this.value;
         document.getElementById('wpmEst').innerText = Math.round(60 / (0.3 + parseFloat(this.value))) + " WPM";
