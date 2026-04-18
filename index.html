@@ -103,7 +103,13 @@
         ex119: "It-is often felt that a speed of 80 words a minute in shorthand is adequate for ordinary business purposes. However, some employers require a higher degree of skill, and-they-will-not employ a stenographer who-cannot write 120 words a minute."
     };
 
-    const grams = ["A", "The", "To-the", "Of-the", "Should-be", "Who-will", "Thank", "Think", "Knowledge", "Language", "Important", "Subject"];
+    const grams = [
+    // --- CORE GRAMMALOGUES ---
+    "A", "An", "The", "All", "Two", "Too", "Of", "To", "But", "Who", "Should", "Put", "Be", "He", "If", "For", "Was", "Whose", "Shall", "Which", "Have", "Thank", "Think", "Though", "Them", "Was", "Whose", "Been", "General", "Important", "Improvement", "Whether", "Knowledge", "Language", "Large", "Subject", "Regular", "Public", "Publish", "Practice", "Between", "Give", "Given", "Him", "Am", "Own", "Are", "Our", "Hour", "Beyond", "You", "Your", "Year", "How", "Why", "Large", "Can", "Come", "Go", "Called", "Equal", "Cold", "Gold", "Quite", "Could", "According", "Care", "Dear", "Chair", "Cheer", "Larger", "Every", "Very", "More", "Remark", "Mr", "Mere", "Nor", "Near", "Sure", "Pleasure", "They", "Their", "There", "Deliver", "Difference", "Different", "Difficult", "Doctor", "During", "Subjected", "Liberty", "Member", "Number", "Remember", "Truth", "Us", "Special", "Speak", "Schooled", "School", "Simplified", "Simple", "Simply", "Small", "Subject", "Satisfaction", "Justification", "Object", "Representation", "Responsible", "Organize", "Knowledge", "Experience", "Signify", "Significance", "Significant", "Insignificant", "Insignificance",
+
+    // --- HIGH-FREQUENCY PHRASES (SSC EXAM SPECIAL) ---
+    "To-the", "Of-the", "And-the", "Should-be", "It-is", "It-will", "Which-will", "Who-will", "I-am", "We-are", "We-have", "For-the", "In-the", "At-the", "Of-which", "To-which", "On-the", "With-the", "I-will", "We-shall", "You-should", "It-should-be", "As-well-as", "As-soon-as", "As-much-as", "In-this", "Of-this", "For-this", "At-all", "By-all", "To-be", "Have-been", "Had-been", "Shall-be", "Which-be", "Who-be", "It-is-not", "I-am-not", "We-are-not", "You-are-not", "I-can", "We-can", "They-can", "It-may-be", "There-will-be", "This-is", "That-is", "There-is", "Which-is", "In-our", "Of-our", "To-our", "By-our", "With-our", "From-the", "Under-the", "Into-the", "Upon-the", "More-than", "Less-than", "Rather-than", "So-as-to", "We-think", "We-think-that", "They-think-that", "I-think-you-will", "I-hope", "I-hope-you-will", "We-hope", "We-hope-that", "In-connection-with", "In-respect-of", "In-order-to", "With-reference-to", "With-regard-to", "It-appears", "It-appears-that", "It-is-said", "It-is-suggested", "Point-of-view", "From-my-point-of-view"
+];
 
     function loadVoices() {
         voices = synth.getVoices();
